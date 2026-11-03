@@ -145,4 +145,5 @@ Push-to-talk (no escucha continua), intenciones rápidas sin IA ("siguiente toma
 - **Normativa:** la operación de drones en Bolivia la regula la DGAC. Los checklists deben basarse en la reglamentación vigente, que hay que verificar con la DGAC (no asumir reglas de EASA/FAA).
 - **Pagos internacionales:** las restricciones de divisas en Bolivia pueden limitar el pago en USD de servicios cloud y de la API. Confirmar tarjeta/medio de pago antes de la Etapa 1.
 - **Música:** no hay biblioteca con licencia. Definir en Etapa 4 (suscripción con licencia comercial para redes y portales inmobiliarios).
-- **Pendientes de decisión:** tipo de computadora (Mac/Windows); conexión a internet en campo; presupuesto mensual del piloto.
+- **Equipo de campo:** iPhone en RC-N3 + computadora **Windows** (requiere receptor AirPlay) + internet en campo.
+- **Pendiente de decisión:** presupuesto mensual del piloto.

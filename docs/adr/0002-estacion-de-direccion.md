@@ -1,6 +1,6 @@
 # ADR 0002 — Estación de Dirección en computadora
 
-Fecha: 2026-11-03 · Estado: propuesta (pendiente de validar en Etapa 0)
+Fecha: 2026-11-03 · Estado: aceptada (pendiente de validar en Etapa 0)
 
 ## Contexto
 
@@ -32,3 +32,9 @@ Crear una **Estación de Dirección** (vista de escritorio de la misma PWA) que 
 
 - PWA de copiloto en el mismo iPhone: iOS la suspende en segundo plano mientras DJI Fly está en pantalla.
 - Control autónomo del vuelo: no soportado/asumido con DJI Flip; fuera de alcance.
+
+## Actualización — equipo confirmado
+
+- Computadora: **Windows**. Windows no recibe AirPlay de forma nativa: se necesita un programa receptor AirPlay. En Etapa 0 se probarán versiones gratuitas o de prueba antes de comprar ninguna licencia.
+- Internet en campo: **sí**.
+- Plan B si la duplicación por AirPlay falla o tiene demasiado retraso: la estación funciona sin vista en vivo (plan, voz, checklist, registro de tomas) y el análisis visual se hace al terminar cada batería con los clips descargados.
