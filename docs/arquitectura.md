@@ -102,7 +102,7 @@ Capas, de menor a mayor coste:
 
 Push-to-talk (no escucha continua), intenciones rápidas sin IA ("siguiente toma", "repetir", "marcar hecha"), plan cacheado offline.
 
-**Restricción iPhone:** el iPhone del RC-N3 ejecuta DJI Fly; las PWA se suspenden en segundo plano. Opciones: (A) segundo dispositivo, (B) briefing previo + registro entre baterías, (C) app nativa con Capacitor. **Pendiente de decisión.**
+**Restricción iPhone:** el iPhone del RC-N3 ejecuta DJI Fly; las PWA se suspenden en segundo plano. **Decisión (ADR 0002):** la voz y el copiloto corren en una **Estación de Dirección en computadora**, que recibe la pantalla del iPhone por AirPlay, analiza fotogramas en vivo con Claude y habla al piloto por auriculares Bluetooth.
 
 ## 8. Integración con Claude
 
@@ -134,7 +134,7 @@ Push-to-talk (no escucha continua), intenciones rápidas sin IA ("siguiente toma
 |---|---|
 | 0 | Monorepo, Docker local, CI; pruebas técnicas en iPhone real (voz PWA, exportación DJI Fly/microSD, FFmpeg con archivos del Flip) |
 | 1 | Auth + roles, multi-tenant, clientes, inmuebles, producciones, biblioteca, generador de planes |
-| 2 | Copiloto de campo: checklists, modo vuelo, voz, offline |
+| 2 | Copiloto de campo: **Estación de Dirección** en computadora (vista en vivo vía AirPlay, análisis visual en vivo, voz al piloto), checklists, offline |
 | 3 | Media e IA: subida, proxies, análisis, clasificación |
 | 4 | Edición automática y exportación (requiere resolver música con licencia) |
 | 5 | Admin, costes de IA, portal cliente, emails |
@@ -145,4 +145,4 @@ Push-to-talk (no escucha continua), intenciones rápidas sin IA ("siguiente toma
 - **Normativa:** la operación de drones en Bolivia la regula la DGAC. Los checklists deben basarse en la reglamentación vigente, que hay que verificar con la DGAC (no asumir reglas de EASA/FAA).
 - **Pagos internacionales:** las restricciones de divisas en Bolivia pueden limitar el pago en USD de servicios cloud y de la API. Confirmar tarjeta/medio de pago antes de la Etapa 1.
 - **Música:** no hay biblioteca con licencia. Definir en Etapa 4 (suscripción con licencia comercial para redes y portales inmobiliarios).
-- **Pendientes de decisión:** segundo dispositivo en vuelo (A/B/C); presupuesto mensual del piloto.
+- **Pendientes de decisión:** tipo de computadora (Mac/Windows); conexión a internet en campo; presupuesto mensual del piloto.
