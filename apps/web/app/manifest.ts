@@ -1,0 +1,15 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "Sofymar Aerial Studio",
+    short_name: "Sofymar",
+    description: "Director audiovisual inteligente y copiloto de producción para drones",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#0b1220",
+    theme_color: "#0b1220",
+    lang: "es",
+    icons: [{ src: "/icon.svg", sizes: "any", type: "image/svg+xml" }],
+  };
+}

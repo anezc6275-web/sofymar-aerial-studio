@@ -8,3 +8,5 @@ dist/
 *.log
 .DS_Store
 media-local/
+next-env.d.ts
+*.tsbuildinfo
