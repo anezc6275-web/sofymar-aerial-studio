@@ -38,3 +38,10 @@ Crear una **Estación de Dirección** (vista de escritorio de la misma PWA) que 
 - Computadora: **Windows**. Windows no recibe AirPlay de forma nativa: se necesita un programa receptor AirPlay. En Etapa 0 se probarán versiones gratuitas o de prueba antes de comprar ninguna licencia.
 - Internet en campo: **sí**.
 - Plan B si la duplicación por AirPlay falla o tiene demasiado retraso: la estación funciona sin vista en vivo (plan, voz, checklist, registro de tomas) y el análisis visual se hace al terminar cada batería con los clips descargados.
+
+## Actualización — Control directo del dron (investigado 2026-11-03)
+
+- El SDK móvil de DJI (MSDK v5) **solo funciona en Android** y su lista de modelos compatibles no incluye el DJI Flip (pendiente de confirmar en developer.dji.com).
+- Con DJI Flip + iPhone **no existe vía para que un software envíe órdenes de vuelo**. La conexión Claude ↔ dron es visual (AirPlay) y por voz al piloto.
+- Si en el futuro se quiere integración directa (p. ej. Claude propone rutas y el piloto las confirma), haría falta un dron compatible con MSDK v5 y un dispositivo Android con app propia. Sería un proyecto aparte, sujeto a la normativa de la DGAC.
+- Computadora: también se probará con **MacBook**, que recibe AirPlay de forma nativa.

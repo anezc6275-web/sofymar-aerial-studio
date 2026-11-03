@@ -67,3 +67,22 @@ La API de Anthropic **no es gratuita**: requiere comprar créditos. Cuando se ap
 3. Ajustar `MAX_AI_CALLS_PER_DAY` (protección de gasto) y reiniciar `pnpm dev`.
 
 Coste aproximado con Claude Opus 5.5: ~0,005–0,01 USD por fotograma analizado. Con análisis cada 5 s, unos 2–3 USD por cada 30 min de vuelo. Analizar solo bajo demanda (“analiza”) reduce mucho el coste.
+
+## Anexo — Prueba con MacBook
+
+La Mac recibe AirPlay **sin programas adicionales** (macOS 12 Monterey o posterior; Mac de 2018 en adelante aprox.).
+
+```bash
+# Si no tienes Node.js 22: instalar desde https://nodejs.org
+corepack enable
+git clone https://github.com/anezc6275-web/sofymar-aerial-studio.git
+cd sofymar-aerial-studio
+pnpm install
+cp .env.example .env
+pnpm dev
+```
+
+1. Ajustes del Sistema → General → AirDrop y Handoff → activar **Receptor AirPlay**.
+2. iPhone y Mac en la misma red Wi-Fi. En el iPhone: Centro de control → **Duplicar pantalla** → la MacBook.
+3. Abrir **Google Chrome** en http://localhost:3000/estacion → **Capturar ventana**.
+   La primera vez macOS pedirá permiso de **Grabación de pantalla** para Chrome (Ajustes del Sistema → Privacidad y seguridad); concederlo y reabrir Chrome.
