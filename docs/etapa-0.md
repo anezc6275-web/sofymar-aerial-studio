@@ -18,6 +18,24 @@ pnpm install
 copy .env.example .env
 ```
 
+### Instalación rápida (un solo paso)
+
+Abrir **PowerShell** y pegar este bloque completo. Instala Node.js, Git y Chrome, descarga el proyecto en *Documentos* y lo inicia. Git abrirá el navegador una vez para iniciar sesión en GitHub (el repositorio es privado).
+
+```powershell
+winget install -e --id OpenJS.NodeJS.LTS --accept-source-agreements --accept-package-agreements
+winget install -e --id Git.Git --accept-source-agreements --accept-package-agreements
+winget install -e --id Google.Chrome --accept-source-agreements --accept-package-agreements
+$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
+cd "$HOME\Documents"
+git clone https://github.com/anezc6275-web/sofymar-aerial-studio.git
+cd sofymar-aerial-studio
+powershell -ExecutionPolicy Bypass -File scripts\windows\instalar.ps1
+.\iniciar.bat
+```
+
+Las siguientes veces basta con **doble clic en `iniciar.bat`** (carpeta *Documentos\sofymar-aerial-studio*).
+
 ## 2. Iniciar
 
 ```powershell
