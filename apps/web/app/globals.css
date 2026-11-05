@@ -293,3 +293,45 @@ button.primario {
   border-radius: 6px;
   flex-shrink: 0;
 }
+
+/* Zona del iPhone dentro de la captura */
+.video-wrap {
+  position: relative;
+  margin: 0 auto;
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.video-llenar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: fill;
+}
+.capa {
+  position: absolute;
+  inset: 0;
+}
+.capa.marcando {
+  cursor: crosshair;
+  background: rgba(0, 0, 0, 0.25);
+  touch-action: none;
+}
+.zona {
+  position: absolute;
+  border: 2px solid var(--acento);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+.capa-ayuda {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(11, 18, 32, 0.85);
+  font-size: 0.9rem;
+  pointer-events: none;
+}

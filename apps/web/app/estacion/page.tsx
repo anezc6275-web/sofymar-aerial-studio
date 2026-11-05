@@ -10,7 +10,7 @@ import {
   type LocalMetrics,
   type ShotStatus,
 } from "@sofymar/shared";
-import { captureFrame } from "@/lib/metrics";
+import { captureFrame, type Recorte } from "@/lib/metrics";
 import { crearReconocedor, hablar, interpretarComando, type Reconocedor } from "@/lib/voice";
 
 interface Registro {
@@ -68,6 +68,13 @@ export default function EstacionPage() {
   const ultimaInstruccion = useRef<{ texto: string; t: number }>({ texto: "", t: 0 });
   const ocupadoRef = useRef(false);
 
+  // Zona del iPhone dentro de la captura (útil al capturar la pantalla completa).
+  const [recorte, setRecorte] = useState<Recorte | null>(null);
+  const [marcando, setMarcando] = useState(false);
+  const [arrastre, setArrastre] = useState<Recorte | null>(null);
+  const inicioArrastre = useRef<{ x: number; y: number } | null>(null);
+  const [proporcion, setProporcion] = useState(16 / 9);
+
   const toma = DEMO_PLAN[indice]!;
 
   // ---- Estado persistente (solo comodidad local; puede fallar sin problema) ----
@@ -75,7 +82,13 @@ export default function EstacionPage() {
     try {
       const raw = localStorage.getItem(CLAVE_ESTADO);
       if (raw) {
-        const s = JSON.parse(raw) as { indice?: number; estados?: Record<string, ShotStatus>; notas?: Nota[] };
+        const s = JSON.parse(raw) as {
+          indice?: number;
+          estados?: Record<string, ShotStatus>;
+          notas?: Nota[];
+          recorte?: Recorte | null;
+        };
+        if (s.recorte) setRecorte(s.recorte);
         if (typeof s.indice === "number" && s.indice < DEMO_PLAN.length) setIndice(s.indice);
         if (s.estados) setEstados(s.estados);
         if (s.notas) setNotas(s.notas);
@@ -86,11 +99,11 @@ export default function EstacionPage() {
   }, []);
   useEffect(() => {
     try {
-      localStorage.setItem(CLAVE_ESTADO, JSON.stringify({ indice, estados, notas }));
+      localStorage.setItem(CLAVE_ESTADO, JSON.stringify({ indice, estados, notas, recorte }));
     } catch {
       /* almacenamiento no disponible */
     }
-  }, [indice, estados, notas]);
+  }, [indice, estados, notas, recorte]);
 
   // ---- Configuración de la API ----
   useEffect(() => {
@@ -139,7 +152,7 @@ export default function EstacionPage() {
   const analizar = useCallback(async () => {
     const video = videoRef.current;
     if (!video || !stream || ocupadoRef.current) return;
-    const frame = captureFrame(video);
+    const frame = captureFrame(video, recorte);
     if (!frame) return;
     ocupadoRef.current = true;
     setOcupado(true);
@@ -182,7 +195,7 @@ export default function EstacionPage() {
       ocupadoRef.current = false;
       setOcupado(false);
     }
-  }, [stream, toma, decir]);
+  }, [stream, toma, decir, recorte]);
 
   // ---- Bucle automático ----
   useEffect(() => {
@@ -301,6 +314,39 @@ export default function EstacionPage() {
     };
   }, [empezarEscucha, terminarEscucha]);
 
+  // ---- Marcar zona con el ratón ----
+  function puntoNormalizado(e: React.PointerEvent<HTMLDivElement>) {
+    const r = e.currentTarget.getBoundingClientRect();
+    return {
+      x: Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)),
+      y: Math.min(1, Math.max(0, (e.clientY - r.top) / r.height)),
+    };
+  }
+  function rectDesde(a: { x: number; y: number }, b: { x: number; y: number }): Recorte {
+    return { x: Math.min(a.x, b.x), y: Math.min(a.y, b.y), w: Math.abs(a.x - b.x), h: Math.abs(a.y - b.y) };
+  }
+  function alPresionar(e: React.PointerEvent<HTMLDivElement>) {
+    if (!marcando) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    inicioArrastre.current = puntoNormalizado(e);
+    setArrastre({ ...inicioArrastre.current, w: 0, h: 0 });
+  }
+  function alMover(e: React.PointerEvent<HTMLDivElement>) {
+    if (!marcando || !inicioArrastre.current) return;
+    setArrastre(rectDesde(inicioArrastre.current, puntoNormalizado(e)));
+  }
+  function alSoltar(e: React.PointerEvent<HTMLDivElement>) {
+    if (!marcando || !inicioArrastre.current) return;
+    const r = rectDesde(inicioArrastre.current, puntoNormalizado(e));
+    inicioArrastre.current = null;
+    setArrastre(null);
+    if (r.w > 0.03 && r.h > 0.03) {
+      setRecorte(r);
+      setMarcando(false);
+    }
+  }
+  const zonaVisible = arrastre ?? recorte;
+
   function reiniciarPlan() {
     setEstados({});
     setIndice(0);
@@ -336,13 +382,50 @@ export default function EstacionPage() {
         <div className="col">
           <div className="panel video-panel">
             {stream ? (
-              <video ref={videoRef} autoPlay muted playsInline className="video" />
+              <div
+                className="video-wrap"
+                style={{ aspectRatio: String(proporcion), width: `min(100%, calc(70vh * ${proporcion}))` }}
+              >
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="video-llenar"
+                  onLoadedMetadata={(e) => {
+                    const v = e.currentTarget;
+                    if (v.videoWidth && v.videoHeight) setProporcion(v.videoWidth / v.videoHeight);
+                  }}
+                />
+                <div
+                  className={`capa ${marcando ? "marcando" : ""}`}
+                  onPointerDown={alPresionar}
+                  onPointerMove={alMover}
+                  onPointerUp={alSoltar}
+                >
+                  {zonaVisible ? (
+                    <div
+                      className="zona"
+                      style={{
+                        left: `${zonaVisible.x * 100}%`,
+                        top: `${zonaVisible.y * 100}%`,
+                        width: `${zonaVisible.w * 100}%`,
+                        height: `${zonaVisible.h * 100}%`,
+                      }}
+                    />
+                  ) : null}
+                  {marcando && !arrastre ? <p className="capa-ayuda">Arrastra con el ratón sobre la pantalla del iPhone</p> : null}
+                </div>
+              </div>
             ) : (
               <div className="video vacio">
                 <p>
                   1. Duplica la pantalla del iPhone (DJI Fly) a esta computadora con el receptor AirPlay.
                   <br />
                   2. Pulsa <strong>Capturar ventana</strong> y elige la ventana del receptor.
+                  <br />
+                  Si la ventana no aparece en la lista: elige <strong>Pantalla completa</strong> y luego{" "}
+                  <strong>Marcar zona del iPhone</strong>.
                 </p>
               </div>
             )}
@@ -354,6 +437,10 @@ export default function EstacionPage() {
                   Capturar ventana
                 </button>
               )}
+              <button onClick={() => setMarcando((m) => !m)} disabled={!stream}>
+                {marcando ? "Cancelar marcado" : recorte ? "Cambiar zona" : "Marcar zona del iPhone"}
+              </button>
+              {recorte ? <button onClick={() => setRecorte(null)}>Quitar zona</button> : null}
               <button onClick={() => void analizar()} disabled={!stream || ocupado}>
                 {ocupado ? "Analizando…" : "Analizar ahora"}
               </button>

@@ -40,21 +40,34 @@ export function computeMetrics(data: ImageData): LocalMetrics {
   };
 }
 
-/** Captura un fotograma del vídeo: JPEG para enviar y métricas locales. */
+/** Zona de recorte en coordenadas normalizadas (0–1) del vídeo capturado. */
+export interface Recorte {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+/** Captura un fotograma del vídeo (opcionalmente recortado): JPEG y métricas locales. */
 export function captureFrame(
   video: HTMLVideoElement,
+  recorte: Recorte | null = null,
   anchoMax = 1280,
 ): { base64: string; dataUrl: string; metricas: LocalMetrics } | null {
-  const w = video.videoWidth;
-  const h = video.videoHeight;
-  if (!w || !h) return null;
+  const vw = video.videoWidth;
+  const vh = video.videoHeight;
+  if (!vw || !vh) return null;
+  const sx = recorte ? Math.round(recorte.x * vw) : 0;
+  const sy = recorte ? Math.round(recorte.y * vh) : 0;
+  const w = recorte ? Math.max(1, Math.round(recorte.w * vw)) : vw;
+  const h = recorte ? Math.max(1, Math.round(recorte.h * vh)) : vh;
   const escala = Math.min(1, anchoMax / w);
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(w * escala);
   canvas.height = Math.round(h * escala);
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(video, sx, sy, w, h, 0, 0, canvas.width, canvas.height);
   const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
 
   // Métricas sobre una versión reducida (más rápido).
