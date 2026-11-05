@@ -2,9 +2,11 @@
   "name": "sofymar-aerial-studio",
   "private": true,
   "packageManager": "pnpm@10.28.0",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "pnpm --parallel --filter @sofymar/api --filter @sofymar/web run dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "media:probe": "pnpm --filter @sofymar/media probe"
