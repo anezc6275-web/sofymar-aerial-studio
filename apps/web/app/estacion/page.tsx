@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  DEMO_PLAN,
+  PLANES,
   type AiMode,
+  type PlanId,
   type AnalyzeFrameResponse,
   type FrameAnalysis,
   type LocalMetrics,
@@ -51,6 +52,8 @@ export default function EstacionPage() {
   const [config, setConfig] = useState<Config | null>(null);
   const [errorApi, setErrorApi] = useState<string | null>(null);
 
+  const [planId, setPlanId] = useState<PlanId>("demo");
+  const plan = (PLANES.find((p) => p.id === planId) ?? PLANES[0]).tomas;
   const [indice, setIndice] = useState(0);
   const [estados, setEstados] = useState<Record<string, ShotStatus>>({});
   const [notas, setNotas] = useState<Nota[]>([]);
@@ -75,7 +78,7 @@ export default function EstacionPage() {
   const inicioArrastre = useRef<{ x: number; y: number } | null>(null);
   const [proporcion, setProporcion] = useState(16 / 9);
 
-  const toma = DEMO_PLAN[indice]!;
+  const toma = plan[indice] ?? plan[0]!;
 
   // ---- Estado persistente (solo comodidad local; puede fallar sin problema) ----
   useEffect(() => {
@@ -83,13 +86,16 @@ export default function EstacionPage() {
       const raw = localStorage.getItem(CLAVE_ESTADO);
       if (raw) {
         const s = JSON.parse(raw) as {
+          planId?: string;
           indice?: number;
           estados?: Record<string, ShotStatus>;
           notas?: Nota[];
           recorte?: Recorte | null;
         };
         if (s.recorte) setRecorte(s.recorte);
-        if (typeof s.indice === "number" && s.indice < DEMO_PLAN.length) setIndice(s.indice);
+        const guardado = PLANES.find((p) => p.id === s.planId) ?? PLANES[0];
+        setPlanId(guardado.id);
+        if (typeof s.indice === "number" && s.indice < guardado.tomas.length) setIndice(s.indice);
         if (s.estados) setEstados(s.estados);
         if (s.notas) setNotas(s.notas);
       }
@@ -99,11 +105,11 @@ export default function EstacionPage() {
   }, []);
   useEffect(() => {
     try {
-      localStorage.setItem(CLAVE_ESTADO, JSON.stringify({ indice, estados, notas, recorte }));
+      localStorage.setItem(CLAVE_ESTADO, JSON.stringify({ planId, indice, estados, notas, recorte }));
     } catch {
       /* almacenamiento no disponible */
     }
-  }, [indice, estados, notas, recorte]);
+  }, [planId, indice, estados, notas, recorte]);
 
   // ---- Configuración de la API ----
   useEffect(() => {
@@ -208,25 +214,25 @@ export default function EstacionPage() {
   const marcar = useCallback(
     (estado: ShotStatus, avanzar: boolean) => {
       setEstados((e) => ({ ...e, [toma.id]: estado }));
-      if (avanzar && indice < DEMO_PLAN.length - 1) {
-        const sig = DEMO_PLAN[indice + 1]!;
+      if (avanzar && indice < plan.length - 1) {
+        const sig = plan[indice + 1]!;
         setIndice(indice + 1);
         decir(`Toma ${sig.orden}: ${sig.nombre}. ${sig.movimiento}, altura ${sig.altura_m} metros.`, true);
       } else if (avanzar) {
         decir("Plan completo. Todas las tomas registradas.", true);
       }
     },
-    [toma.id, indice, decir],
+    [toma.id, indice, plan, decir],
   );
 
   const irA = useCallback(
     (i: number) => {
-      if (i < 0 || i >= DEMO_PLAN.length) return;
+      if (i < 0 || i >= plan.length) return;
       setIndice(i);
-      const s = DEMO_PLAN[i]!;
+      const s = plan[i]!;
       decir(`Toma ${s.orden}: ${s.nombre}. ${s.movimiento}, altura ${s.altura_m} metros.`, true);
     },
-    [decir],
+    [plan, decir],
   );
 
   // ---- Voz del piloto (push-to-talk) ----
@@ -351,6 +357,16 @@ export default function EstacionPage() {
     setEstados({});
     setIndice(0);
     setNotas([]);
+  }
+
+  function cambiarPlan(id: string) {
+    const nuevo = PLANES.find((p) => p.id === id);
+    if (!nuevo || nuevo.id === planId) return;
+    setPlanId(nuevo.id);
+    setIndice(0);
+    setEstados({});
+    const s = nuevo.tomas[0]!;
+    decir(`Plan ${nuevo.nombre}. Toma ${s.orden}: ${s.nombre}.`, true);
   }
 
   const ultimo = registros[0];
@@ -514,13 +530,23 @@ export default function EstacionPage() {
         <div className="col">
           <div className="panel">
             <div className="fila">
-              <h2>Plan de tomas (demo)</h2>
+              <h2>Plan de tomas</h2>
               <button className="small" onClick={reiniciarPlan}>
                 Reiniciar
               </button>
             </div>
+            <label className="small">
+              Plan:{" "}
+              <select value={planId} onChange={(e) => cambiarPlan(e.target.value)}>
+                {PLANES.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+            </label>
             <ol className="plan">
-              {DEMO_PLAN.map((s, i) => {
+              {plan.map((s, i) => {
                 const est = estados[s.id] ?? "pendiente";
                 return (
                   <li key={s.id} className={`toma ${i === indice ? "actual" : ""} e-${est}`} onClick={() => irA(i)}>
