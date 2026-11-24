@@ -11,7 +11,9 @@
     "typecheck": "turbo run typecheck",
     "media:probe": "pnpm --filter @sofymar/media probe",
     "video": "pnpm --filter @sofymar/video studio",
-    "video:render": "pnpm --filter @sofymar/video render"
+    "video:render": "pnpm --filter @sofymar/video render",
+    "video:inmobiliaria": "pnpm --filter @sofymar/video render:inmobiliaria",
+    "video:lote": "pnpm --filter @sofymar/video render:lote"
   },
   "devDependencies": {
     "turbo": "2.11.10",

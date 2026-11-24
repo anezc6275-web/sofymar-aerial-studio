@@ -5,13 +5,23 @@
   "type": "module",
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "render": "remotion render src/index.ts PropiedadVertical out/propiedad-vertical.mp4",
+    "render": "remotion render src/index.ts PublicidadVertical out/publicidad-vertical.mp4",
+    "render:inmobiliaria": "remotion render src/index.ts PropiedadVertical out/propiedad-vertical.mp4",
     "render:demo": "remotion render src/index.ts VerticalBase out/vertical-base.mp4",
-    "still": "remotion still src/index.ts PropiedadVertical out/portada.png --frame=30",
+    "render:lote": "tsx scripts/render-lote.ts",
+    "still": "remotion still src/index.ts PublicidadVertical out/portada.png --frame=45",
+    "sonidos": "python3 scripts/generar-sonidos.py",
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@fontsource/bebas-neue": "5.3.0",
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/montserrat": "5.3.0",
+    "@fontsource/playfair-display": "5.3.0",
+    "@remotion/bundler": "4.0.542",
     "@remotion/cli": "4.0.542",
+    "@remotion/fonts": "4.0.542",
+    "@remotion/renderer": "4.0.542",
     "@remotion/transitions": "4.0.542",
     "react": "19.3.1",
     "react-dom": "19.3.1",
@@ -19,6 +29,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@types/react": "19.3.0"
+    "@types/react": "19.3.0",
+    "tsx": "4.23.15"
   }
 }

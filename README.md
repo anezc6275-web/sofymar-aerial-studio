@@ -31,7 +31,7 @@ Abrir http://localhost:3000/estacion
 |---|---|
 | `apps/web` | PWA Next.js: Estación de Dirección |
 | `apps/api` | API Fastify: análisis de fotogramas (simulado o Claude), límite de gasto diario |
-| `apps/video` | Remotion: plantillas de vídeo vertical 9:16 (Reels, TikTok, Shorts) |
+| `apps/video` | Remotion: vídeos verticales 9:16 — publicidad multirrubro e inmobiliaria |
 | `packages/shared` | Esquemas y tipos compartidos, plan de tomas de demostración |
 | `packages/ai` | Prompts versionados e integración con Claude |
 | `packages/media` | Inspección de archivos del dron y extracción de fotogramas (FFmpeg) |

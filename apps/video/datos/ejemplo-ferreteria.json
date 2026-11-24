@@ -1,0 +1,35 @@
+{
+  "composicion": "PublicidadVertical",
+  "salida": "out/ferreteria-el-tornillo.mp4",
+  "props": {
+    "tema": {
+      "nombreMarca": "Ferretería El Tornillo",
+      "colorPrimario": "#FACC15",
+      "colorSecundario": "#EA580C",
+      "colorFondo": "#111111",
+      "colorTexto": "#FFFFFF",
+      "fuenteTitulos": "bebas",
+      "fuenteTexto": "montserrat",
+      "ritmo": "dinamico",
+      "estiloDestacado": "marcador",
+      "mayusculasTitulos": true
+    },
+    "duracionTransicion": 0.45,
+    "escenas": [
+      { "tipo": "portada", "etiqueta": "Todo para tu obra", "titular": "Herramientas *profesionales*", "animacion": "escala" },
+      {
+        "tipo": "beneficios",
+        "titulo": "Encuentra",
+        "items": [
+          { "icono": "🔧", "texto": "Herramientas eléctricas" },
+          { "icono": "🎨", "texto": "Pinturas y acabados" },
+          { "icono": "🚚", "texto": "Entrega a domicilio" }
+        ],
+        "transicion": "empuje"
+      },
+      { "tipo": "oferta", "etiqueta": "-15%", "titulo": "Taladros seleccionados", "precioAnterior": "Bs 650", "precio": "Bs 550", "nota": "Hasta agotar stock", "transicion": "zoom" },
+      { "tipo": "cierre", "llamadaAccion": "Pide por WhatsApp", "contacto": "+591 700 00000", "redes": ["@eltornillo"], "transicion": "fundido" }
+    ],
+    "efectos": { "grano": true, "vineta": true, "particulas": false, "destellos": false, "bandasCine": false }
+  }
+}
